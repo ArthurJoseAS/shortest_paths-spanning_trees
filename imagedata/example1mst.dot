@@ -1,0 +1,10 @@
+graph output_graph {
+a -- b [weight=3.0, label="3.0"];
+b -- f [weight=4.0, label="4.0"];
+f -- g [weight=3.0, label="3.0"];
+f -- i [weight=3.0, label="3.0"];
+g -- d [weight=2.0, label="2.0"];
+d -- c [weight=3.0, label="3.0"];
+d -- e [weight=5.0, label="5.0"];
+i -- h [weight=3.0, label="3.0"];
+}

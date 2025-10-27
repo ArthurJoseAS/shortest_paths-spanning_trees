@@ -1,8 +1,10 @@
 import sys
 import pydot
 from typing import TypeAlias
+import heapq
 
 NodesListType: TypeAlias = list[str]
+#[src_node : (dst_node, edge_weight) ]
 EdgeListType: TypeAlias = dict[str, list[tuple[str, float]]]
 
 def fill_nodes_list(graph: pydot.Dot, nodes: NodesListType):
@@ -40,14 +42,57 @@ def generate_graph(graph: pydot.Dot) -> tuple[list, dict]:
     return ret_nodes, ret_edge_list
 
 
-# def mst_prim(nodes: NodesListType, weighted_edge_list: EdgeListType)
+def mst_prim(nodes: NodesListType, weighted_edge_list: EdgeListType) -> EdgeListType:
+    s = nodes[0] 
+    
+    # let b in work_queue, 
+    # b[0] = is the weight of the edge
+    # b[1] is the source of the edge
+    # b[2] is the destination of the edge
+    work_queue: list[tuple[float, str ,str]] = []
+    mst: EdgeListType = {}
+    used_nodes = set()
+    for e in weighted_edge_list[s]:
+        work_queue.append((e[1], s, e[0]))
+    heapq.heapify(work_queue)
+    mst[s] = []
+    used_nodes.add(s)
+    while work_queue:
+        last = heapq.heappop(work_queue)
+        if last[2] not in used_nodes:
+            if mst.get(last[1]) == None:
+                mst[last[1]] = []
+            mst[last[1]].append((last[2], last[0]))
+        used_nodes.add(last[2])
+        if not weighted_edge_list.get(last[2]) == None:
+            for e in weighted_edge_list[last[2]]:
+                if e[0] not in used_nodes:
+                    work_queue.append((e[1], last[2], e[0]))
+        heapq.heapify(work_queue)
+    return mst
+
+def export_graph_from_edgelist(edgelist: EdgeListType) -> pydot.Dot:
+    export_graph = pydot.Dot("output_graph", graph_type="graph")
+    for (s, edge_weight_list) in edgelist.items():
+        for e in edge_weight_list:
+            str_expression = list("\"")
+            str_expression.append(str(e[1]))
+            str_expression.append("\"")
+            export_graph.add_edge(pydot.Edge(s, e[0], weight=e[1], label=''.join(str_expression)))
+            
+    return export_graph
+
+
 if __name__ == "__main__":
     arquivo = sys.argv[1]
     graph = pydot.graph_from_dot_file(arquivo).pop()
     nodes: NodesListType
-    #edge_list["a"] returns a the adjacency list of the node "a" with the weight for each given edge
     edge_list: EdgeListType
     nodes, edge_list = generate_graph(graph) 
-    print(nodes)
-    for (k, v) in edge_list.items():
+    minimum_spanning_tree = mst_prim(nodes, edge_list)
+    exportgraph = export_graph_from_edgelist(minimum_spanning_tree)
+    nome_arquivo: str = sys.argv[1][:sys.argv[1].rindex(".")]
+    exportgraph.write(nome_arquivo + "mst.dot")
+    for (k, v) in minimum_spanning_tree.items():
         print(str(k) + ": " + str(v))
+    
