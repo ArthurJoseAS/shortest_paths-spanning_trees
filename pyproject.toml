@@ -1,0 +1,9 @@
+[project]
+name = "shortest-paths"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "pydot>=4.0.1",
+]
