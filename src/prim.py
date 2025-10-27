@@ -1,7 +1,11 @@
 import sys
 import pydot
+from typing import TypeAlias
 
-def fill_nodes_list(graph: pydot.Dot, nodes: list[str]):
+NodesListType: TypeAlias = list[str]
+EdgeListType: TypeAlias = dict[str, list[tuple[str, float]]]
+
+def fill_nodes_list(graph: pydot.Dot, nodes: NodesListType):
     for e in graph.get_edges():
         if str(e.get_source()) not in nodes:
             nodes.append(str(e.get_source()))
@@ -9,7 +13,7 @@ def fill_nodes_list(graph: pydot.Dot, nodes: list[str]):
             nodes.append(str(e.get_destination()))
         
 
-def fill_edge_list(graph: pydot.Dot, nodes: dict[str, int], edgelist: dict[str, list[tuple[str, float]]],
+def fill_edge_list(graph: pydot.Dot, edgelist: EdgeListType,
                    is_digraph: bool):
     for e in graph.get_edges():
         if edgelist.get(e.get_source()):
@@ -24,41 +28,26 @@ def fill_edge_list(graph: pydot.Dot, nodes: dict[str, int], edgelist: dict[str, 
             
 
 def generate_graph(graph: pydot.Dot) -> tuple[list, dict]:
-    ret_nodes: list[str] = []
-    ret_edge_list: dict[str, list[tuple[str, float]]] = {}
+    ret_nodes: NodesListType = []
+    ret_edge_list: EdgeListType = {}
     is_digraph = False
     if graph.get_type() == "digraph":
         is_digraph = True
     fill_nodes_list(graph, ret_nodes)
     ret_nodes.sort()
-    fill_edge_list(graph, ret_nodes, ret_edge_list, is_digraph)
+    fill_edge_list(graph, ret_edge_list, is_digraph)
 
     return ret_nodes, ret_edge_list
 
 
-
-
+# def mst_prim(nodes: NodesListType, weighted_edge_list: EdgeListType)
 if __name__ == "__main__":
     arquivo = sys.argv[1]
     graph = pydot.graph_from_dot_file(arquivo).pop()
-    nodes: list[str]
+    nodes: NodesListType
     #edge_list["a"] returns a the adjacency list of the node "a" with the weight for each given edge
-    edge_list: dict[str, list[tuple[str, float]]]
+    edge_list: EdgeListType
     nodes, edge_list = generate_graph(graph) 
     print(nodes)
     for (k, v) in edge_list.items():
         print(str(k) + ": " + str(v))
-    # vertices, matriz = ler_grafo_dot(arquivo)
-    
-    # # for v in vertices:
-    # #     export_graph.add_node(pydot.Node(v))
-    
-    # # dist_list = [None]*len(vertices)
-    # # resultado = bfs(vertices, matriz)
-    # # print("Ordem da BFS:", " -> ".join(resultado))
-    # # print("\nMatriz de Adjacência:")
-    
-    # for i in range(len(vertices)):
-    #     print(str(vertices[i]) + ": " + str(matriz[i]) + "  Distancia: "  + str(dist_list[i]))
-    # nome_arquivo: str = sys.argv[1][:sys.argv[1].rindex(".")]
-    # export_graph.write(nome_arquivo + "bfstree.dot")
