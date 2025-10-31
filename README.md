@@ -1,5 +1,6 @@
 # Shortest Paths and Minimum Spanning Trees algorithm implementations
 In this project three graphs algorithms are being implemented:
+    
     Prim's algorithm for the minimum spanning tree
 
     Floyd-Warshall algorithm for shortest paths on directed graphs
