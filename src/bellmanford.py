@@ -58,7 +58,7 @@ def bellman_ford(nodes: NodesListType, edge_list: EdgeListType, origem: str):
     for u in edge_list:
         for v, peso in edge_list[u]:
             if dist[u] + peso < dist[v]:
-                print("⚠️ Ciclo de peso negativo detectado!")
+                print("Ciclo de peso negativo detectado!")
                 return None, None
 
     return dist, pai
